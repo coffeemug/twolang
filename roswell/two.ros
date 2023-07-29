@@ -1,0 +1,20 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  (pushnew (truename "~/cl/") ql:*local-project-directories* )
+  (ql:register-local-projects)
+  (ql:quickload '(twolang) :silent t))
+
+(defpackage :ros.script.two.3880654440
+  (:use :cl))
+(in-package :ros.script.two.3880654440)
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (twolang/main:main argv))
+
+;;; vim: set ft=lisp lisp:
