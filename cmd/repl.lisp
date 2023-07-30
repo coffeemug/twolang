@@ -1,5 +1,5 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl :twolang/lex :twolang/parse)
+  (:use :cl :twolang/lex :twolang/parse :twolang/tc)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -71,4 +71,4 @@ installed."
       (format stream "]: " count))))
 
 (defun eval-line (line)
-  (format t "~s~%~%" (parse (lex line))))
+  (format t "~s~%~%" (tc! (parse (lex line)))))

@@ -1,5 +1,5 @@
 (defpackage :twolang/util/maxpc
-  (:use :cl :maxpc :access)
+  (:use :cl :maxpc :twolang/util/ast)
   (:import-from :alexandria :make-keyword)
   (:export
    #:=constant
@@ -62,7 +62,7 @@ corresponding parser to parse the token out a token stream."
             (list :node ,keyword-name :value res))))
        (defun ,predicate-name ()
          (=satisfies (lambda (token)
-                       (eq (access token :node) ,keyword-name))))
+                       (eq (node token) ,keyword-name))))
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (export ',predicate-name)))))
 

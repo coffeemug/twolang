@@ -1,5 +1,5 @@
 (defpackage :twolang/lex
-  (:use :cl :maxpc :maxpc.char :maxpc.digit :access :twolang/util/maxpc)
+  (:use :cl :maxpc :maxpc.char :maxpc.digit :twolang/util/maxpc)
   (:import-from :alexandria :flatten)
   (:export
    #:lex))
