@@ -19,9 +19,7 @@
    :handler #'repl-command-handler))
 
 (defstruct repl-opts
-  (print-lex-p nil)
-  (print-ast-p nil)
-  (print-lisp-p nil))
+  print-lex-p print-ast-p print-lisp-p)
 
 (defun repl-command-handler (cmd)
   (declare (ignore cmd))
