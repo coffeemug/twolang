@@ -1,5 +1,5 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl :twolang/lex :twolang/parse :twolang/tc)
+  (:use :cl :twolang/util/ast :twolang/lex :twolang/parse :twolang/tc :twolang/cc)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -71,4 +71,10 @@ installed."
       (format stream "]: " count))))
 
 (defun eval-line (line)
-  (format t "~s~%~%" (tc! (parse (lex line)))))
+  (let* ((checked (tc! (parse (lex line))))
+	 (compiled (cc checked)))
+    (with-color (:black :effect :bright)
+      (format t "=> "))
+    (format t "~s :: ~a~%~%"
+	    (funcall (compile nil `(lambda () ,compiled)))
+	    (type-hrepr (node-type checked)))))

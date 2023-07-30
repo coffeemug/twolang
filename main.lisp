@@ -49,10 +49,7 @@ Maybe/idk:
 
 Some early implementation principles:
 - Attach source info to AST nodes and report good errors right away.
-  Will save a ton of headaches later.
-- Code should be organized per AST node, not per compiler pass. For
-  the first year or whatever you're way more likely to tinker with the
-  compiler on node-basis rather than pass-basis.
+  Get error reporting right early. Will save a ton of headaches later.
 - Build and end-to-end test suite early
 - Don't build pieces of the toolchain until you need them.
 

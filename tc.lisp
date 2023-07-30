@@ -1,7 +1,8 @@
 (defpackage :twolang/tc
   (:use :cl :twolang/util/ast)
   (:export
-   #:tc!))
+   #:tc!
+   #:type-hrepr))
 
 (in-package :twolang/tc)
 
@@ -11,7 +12,7 @@
     (:addop (tc-op! node))
     (:subop (tc-op! node))
     (:mulop (tc-op! node))
-    (otherwise nil))
+    (otherwise (error "tc! unknown node type")))
   node)
 
 (defun tc-op! (node)
@@ -24,3 +25,8 @@
 		 :int)
     (error "op nodes have to be ints"))
   (setf (node-type node) :int))
+
+(defun type-hrepr (type)
+  (string-capitalize
+   (string-downcase
+    (symbol-name type))))
