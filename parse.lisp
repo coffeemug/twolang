@@ -1,5 +1,5 @@
 (defpackage :twolang/parse
-  (:use :cl :maxpc :twolang/lex)
+  (:use :cl :maxpc :twolang/lex :twolang/util/maxpc)
   (:shadow #:parse)
   (:export
    #:parse))
@@ -11,5 +11,13 @@
   (maxpc::parse tokens (=toplevel)))
 
 (defun =toplevel ()
-  (%or (=int-literal)))
+  (%or (=term)))
 
+(defun =term ()
+  (=operators (=factor)
+	      (=plus) :addop
+	      (=minus) :subop))
+
+(defun =factor ()
+  (=operators (=int-literal)
+	      (=asterisk) :mulop))

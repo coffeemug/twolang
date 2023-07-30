@@ -87,7 +87,7 @@ symbol."
 		       (=list (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
 						collect (=constant token optype)))
 			      operand-parser)
-	   (list :node :binop :op optype :right rvalue))
+	   (list :node optype :right rvalue))
 	 (lambda (lvalue partial-operator)
 	   `(:left ,lvalue ,@partial-operator))))
 
@@ -96,7 +96,7 @@ symbol."
 			(=list operand-parser
 			       (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
 						 collect (=constant token optype))))
-	    (list :node :binop :op optype :left lvalue))
+	    (list :node optype :left lvalue))
 	  operand-parser
 	  (lambda (partial-operator rvalue)
 	    `(:right ,rvalue ,@partial-operator))))

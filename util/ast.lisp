@@ -3,6 +3,8 @@
   (:export
    #:node
    #:node-value
+   #:node-left
+   #:node-right
    #:node-type
    #:set-node-type))
 
@@ -13,6 +15,12 @@
 
 (defun node-value (node)
   (dict-get node :value))
+
+(defun node-left (node)
+  (dict-get node :left))
+
+(defun node-right (node)
+  (dict-get node :right))
 
 (defun node-type (node)
   (dict-get node :type))
