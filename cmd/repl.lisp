@@ -1,5 +1,5 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl)
+  (:use :cl :twolang/lex)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -23,7 +23,6 @@
   (print-platform-header)
   (maybe-start-slynk)
   (repl))
-
 
 (defun print-platform-header ()
   (let ((mt (machine-type))
@@ -72,4 +71,4 @@ installed."
       (format stream "]: " count))))
 
 (defun eval-line (line)
-  (declare (ignore line)))
+  (format t "~a~%~%" (lex line)))
