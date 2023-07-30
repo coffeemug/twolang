@@ -17,6 +17,7 @@
   (%or
    ;; literals
    (=lex/int-literal)
+   (=lex/string-literal)
 
    ;; brackets
    (=lex/lparen)
@@ -34,6 +35,11 @@
 ;; literals
 (deftoken int-literal
     (=natural-number))
+
+(deftoken string-literal
+    (=destructure (_ str _)
+		  (=list (?char #\") (=subseq (%any (?not (?char #\")))) (?char #\"))
+      str))
 
 ;; brackets
 (deftoken+ lparen (?char #\())

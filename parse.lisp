@@ -19,5 +19,10 @@
 	      (=minus) :subop))
 
 (defun =factor ()
-  (=operators (=int-literal)
+  (=operators (=primitive)
 	      (=asterisk) :mulop))
+
+(defun =primitive ()
+  (%or
+   (=int-literal)
+   (=string-literal)))

@@ -8,6 +8,7 @@
 (defun cc (node)
   (case (node node)
     (:int-literal (node-value node))
+    (:string-literal (node-value node))
     (:addop (cc-op node))
     (:subop (cc-op node))
     (:mulop (cc-op node))
