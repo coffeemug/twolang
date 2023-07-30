@@ -7,6 +7,7 @@
    #:=fold
    #:=foldr
    #:=list*
+   #:with-pos%
    #:deftoken
    #:deftoken+
    #:=operators
@@ -45,7 +46,18 @@
 			(%any (=destructure (_ item)
 					    (=list delimeter-parser item-parser)
 					    item)))
-      (cons head tail))))
+     (cons head tail))))
+
+(defmacro with-pos% (posvar parser)
+  (let ((input-var (gensym)))
+    `(lambda (,input-var)
+       (let ((,posvar (maxpc.input:input-position ,input-var)))
+	 (funcall
+	  ,parser
+	  ,input-var)))))
+
+(with-pos% pos
+  (=constant 1))
 
 (defmacro deftoken (name parser)
   "Defines a lexer to parse the token out of a character stream, and a
@@ -56,10 +68,13 @@ corresponding parser to parse the token out a token stream."
          (predicate-name (intern (concatenate 'string "=" name-str))))
     `(progn
        (defun ,lexer-name ()
-         (=transform
-          ,parser
-          (lambda (res)
-            (list :node ,keyword-name :value res))))
+	 (with-pos% pos
+	   (=transform
+	    ,parser
+	    (lambda (res)
+	      (list :node ,keyword-name
+		    :value res
+		    :pos pos)))))
        (defun ,predicate-name ()
          (=satisfies (lambda (token)
                        (eq (node token) ,keyword-name))))
@@ -69,34 +84,26 @@ corresponding parser to parse the token out a token stream."
 (defmacro deftoken+ (name parser)
   "Same as `deftoken`, but simple tokens that can be expressed as a
 symbol."
-  (let* ((name-str (symbol-name name))
-         (keyword-name (make-keyword name-str))
-	 (lexer-name (intern (concatenate 'string "=" "LEX/" name-str)))
-         (predicate-name (intern (concatenate 'string "=" name-str))))
-    `(progn
-       (defun ,lexer-name ()
-         (=constant ,parser ,keyword-name))
-       (defun ,predicate-name ()
-         (=constant (?eq ,keyword-name) ,keyword-name))
-       (eval-when (:compile-toplevel :load-toplevel :execute)
-         (export ',predicate-name)))))
+  `(deftoken ,name ,parser))
 
 (defun =operators (operand-parser &rest token-optype-pairs)
   (=fold operand-parser
-	 (=destructure (optype rvalue)
-		       (=list (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
-						collect (=constant token optype)))
-			      operand-parser)
-	   (list :node optype :right rvalue))
+	 (with-pos% pos
+	   (=destructure (optype rvalue)
+			 (=list (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
+						  collect (=constant token optype)))
+				operand-parser)
+	     (list :node optype :right rvalue :pos pos)))
 	 (lambda (lvalue partial-operator)
 	   `(:left ,lvalue ,@partial-operator))))
 
 (defun =operators-r (operand-parser &rest token-optype-pairs)
-  (=foldr (=destructure (lvalue optype)
-			(=list operand-parser
-			       (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
-						 collect (=constant token optype))))
-	    (list :node optype :left lvalue))
+  (=foldr (with-pos% pos
+	    (=destructure (lvalue optype)
+			  (=list operand-parser
+				 (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
+						   collect (=constant token optype))))
+	      (list :node optype :left lvalue)))
 	  operand-parser
 	  (lambda (partial-operator rvalue)
 	    `(:right ,rvalue ,@partial-operator))))

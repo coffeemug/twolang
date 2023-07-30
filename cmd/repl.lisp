@@ -71,10 +71,24 @@ installed."
       (format stream "]: " count))))
 
 (defun eval-line (line)
+  (handler-bind ((error 'on-error))
+    (restart-case (eval-line* line)
+      (skip-expression () nil))))
+
+(defun eval-line* (line)
   (let* ((checked (tc! (parse (lex line))))
 	 (compiled (cc checked)))
     (with-color (:black :effect :bright)
       (format t "=> "))
+    (format t "~s" checked)
     (format t "~s :: ~a~%~%"
 	    (funcall (compile nil `(lambda () ,compiled)))
 	    (type-hrepr (node-type checked)))))
+
+(defun on-error (error)
+  (declare (special *trap-errors-p*))
+  (if *debugger-hook*
+      (invoke-debugger error)
+      (progn
+	(format t "Error: ~a~%~%" error)
+	(invoke-restart (find-restart 'skip-expression)))))
