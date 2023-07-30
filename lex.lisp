@@ -14,34 +14,37 @@
   (%any (=token)))
 
 (defun =token ()
-  (%or (=lex/int-literal)
-       (=bracket)
-       (=operator)
-       (?ws)))
+  (%or
+   ;; literals
+   (=lex/int-literal)
+
+   ;; brackets
+   (=lex/lparen)
+   (=lex/rparen)
+
+   ;; operators
+   (=lex/plus)
+   (=lex/minus)
+   (=lex/asterisk)
+   (=lex/slash)
+
+   ;; whitespace
+   (?ws)))
 
 ;; literals
 (deftoken int-literal
     (=natural-number))
 
 ;; brackets
-(defun =bracket ()
-  (%or (=lex/lparen)
-       (=lex/rparen)))
-
 (deftoken+ lparen (?char #\())
 (deftoken+ rparen (?char #\)))
 
 ;; operators
-(defun =operator ()
-  (%or (=lex/plus)
-       (=lex/minus)
-       (=lex/asterisk)
-       (=lex/slash)))
-
 (deftoken+ plus (?char #\+))
 (deftoken+ minus (?char #\-))
 (deftoken+ asterisk (?char #\*))
 (deftoken+ slash (?char #\/))
 
+;; whitespace
 (defun ?ws () (%some (?whitespace)))
 
