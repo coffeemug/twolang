@@ -13,7 +13,7 @@
     (:addop (tc-op! node))
     (:subop (tc-op! node))
     (:mulop (tc-op! node))
-    (otherwise (error "tc! unknown node type")))
+    (otherwise (error (format nil "tc! unknown node type ~a" (node node)))))
   node)
 
 (defun tc-op! (node)

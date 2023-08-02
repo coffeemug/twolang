@@ -1,8 +1,7 @@
 (defpackage :twolang/lex
   (:use :cl :maxpc :maxpc.char :maxpc.digit :twolang/util/maxpc)
-  (:import-from :alexandria :flatten)
   (:export
-   #:lex))
+   #:lex #:=token))
 
 (in-package :twolang/lex)
 

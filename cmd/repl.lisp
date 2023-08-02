@@ -1,5 +1,5 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl :twolang/util/ast :twolang/lex :twolang/parse :twolang/tc :twolang/cc)
+  (:use :cl :twolang/util/ast :twolang/lex :twolang/lexed-input :twolang/parse :twolang/tc :twolang/cc)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -84,21 +84,20 @@ installed."
 
 (defun eval-line* (line)
   (declare (special *repl-ctrl*))
-  (let ((lexed (lex line)))
+  (let ((parsed (parse (make-lexed-input line (=token)))))
     (when (repl-opts-print-lex-p *repl-ctrl*)
-      (format t "~s~%" lexed))
-    (let ((parsed (parse lexed)))
-      (when (repl-opts-print-ast-p *repl-ctrl*)
-	(format t "~s~%" parsed))
-      (let* ((checked (tc! (parse (lex line))))
-	     (compiled (cc checked)))
-	(when (repl-opts-print-lisp-p *repl-ctrl*)
-	  (format t "~s~%" compiled))
-	(with-color (:black :effect :bright)
-	  (format t "=> "))
-	(format t "~s :: ~a~%~%"
-	    (funcall (compile nil `(lambda () ,compiled)))
-	    (type-hrepr (node-type checked)))))))
+      (format t "TODO: implement~%"))
+    (when (repl-opts-print-ast-p *repl-ctrl*)
+      (format t "~s~%" parsed))
+    (let* ((checked (tc! (parse (lex line))))
+	   (compiled (cc checked)))
+      (when (repl-opts-print-lisp-p *repl-ctrl*)
+	(format t "~s~%" compiled))
+      (with-color (:black :effect :bright)
+	(format t "=> "))
+      (format t "~s :: ~a~%~%"
+	      (funcall (compile nil `(lambda () ,compiled)))
+	      (type-hrepr (node-type checked))))))
 
 (defun on-error (error)
   (if *debugger-hook*

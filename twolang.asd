@@ -11,4 +11,4 @@
                     (symbol-call :fiveam :run!
                                  (find-symbol* :basic-test-suite :twolang/test/basics))))
 
-(register-system-packages :maxpc '(:maxpc.char :maxpc.digit))
+(register-system-packages :maxpc '(:maxpc.char :maxpc.digit :maxpc.input))

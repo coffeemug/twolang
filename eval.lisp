@@ -1,13 +1,13 @@
 (defpackage :twolang/eval
-  (:use :cl :twolang/util/ast :twolang/lex :twolang/parse :twolang/tc :twolang/cc)
+  (:use :cl :twolang/util/ast :twolang/lex :twolang/lexed-input
+	:twolang/parse :twolang/tc :twolang/cc :maxpc.input)
   (:export
    #:eval-source))
 
 (in-package :twolang/eval)
 
 (defun eval-source (source)
-  (let* ((lexed (lex source))
-	 (parsed (parse lexed))
+  (let* ((parsed (parse (make-lexed-input source (=token))))
 	 (checked (tc! parsed))
 	 (compiled (cc checked)))
     (values
