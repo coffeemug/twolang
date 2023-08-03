@@ -1,9 +1,9 @@
-(defpackage :twolang/lexed-input
+(defpackage :twolang/lex/lexed-input
   (:use :cl :maxpc.input)
   (:export
    #:lexed-input #:make-lexed-input #:source-input #:active-lexer #:input-sequence))
 
-(in-package :twolang/lexed-input)
+(in-package :twolang/lex/lexed-input)
 
 (defclass lexed-input ()
   ((source-input :initarg :source-input :accessor source-input)

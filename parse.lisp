@@ -1,5 +1,5 @@
 (defpackage :twolang/parse
-  (:use :cl :maxpc :twolang/lex :twolang/util/maxpc)
+  (:use :cl :maxpc :twolang/lex/std-lex :twolang/util/maxpc)
   (:shadow #:parse)
   (:export
    #:parse))

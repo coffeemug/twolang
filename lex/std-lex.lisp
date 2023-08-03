@@ -1,17 +1,11 @@
-(defpackage :twolang/lex
+(defpackage :twolang/lex/std-lex
   (:use :cl :maxpc :maxpc.char :maxpc.digit :twolang/util/maxpc)
   (:export
-   #:lex #:=token))
+   #:=token))
 
-(in-package :twolang/lex)
+(in-package :twolang/lex/std-lex)
 
 ;; lexer
-(defun lex (str)
-  (parse str (%tokens)))
-
-(defun %tokens ()
-  (%any (=token)))
-
 (defun =token ()
   (%or
    ;; literals

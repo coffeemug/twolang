@@ -1,5 +1,5 @@
 (defpackage :twolang/eval
-  (:use :cl :twolang/util/ast :twolang/lex :twolang/lexed-input
+  (:use :cl :twolang/util/ast :twolang/lex/std-lex :twolang/lex/lexed-input
 	:twolang/parse :twolang/tc :twolang/cc :maxpc.input)
   (:export
    #:eval-source))

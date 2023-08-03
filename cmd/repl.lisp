@@ -1,5 +1,5 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl :twolang/util/ast :twolang/lex :twolang/lexed-input :twolang/parse :twolang/tc :twolang/cc)
+  (:use :cl :twolang/util/ast :twolang/lex/std-lex :twolang/lex/lexed-input :twolang/parse :twolang/tc :twolang/cc)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -89,7 +89,7 @@ installed."
       (format t "TODO: implement~%"))
     (when (repl-opts-print-ast-p *repl-ctrl*)
       (format t "~s~%" parsed))
-    (let* ((checked (tc! (parse (lex line))))
+    (let* ((checked (tc! parsed))
 	   (compiled (cc checked)))
       (when (repl-opts-print-lisp-p *repl-ctrl*)
 	(format t "~s~%" compiled))
