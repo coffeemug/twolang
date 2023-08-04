@@ -7,7 +7,7 @@
 (in-package :twolang/eval)
 
 (defun eval-source (source)
-  (let* ((parsed (parse (make-lexed-input source (=token))))
+  (let* ((parsed (parse (make-lexed-input source (=std-token))))
 	 (checked (tc! parsed))
 	 (compiled (cc checked)))
     (values

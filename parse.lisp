@@ -1,5 +1,5 @@
 (defpackage :twolang/parse
-  (:use :cl :maxpc :twolang/lex/std-lex :twolang/util/maxpc)
+  (:use :cl :maxpc :twolang/lex/std-lex :twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc)
   (:shadow #:parse)
   (:export
    #:parse))
@@ -25,4 +25,34 @@
 (defun =primitive ()
   (%or
    (=int-literal)
-   (=string-literal)))
+   (=string-literal)
+   (=template-literal)))
+
+(defun =template-literal ()
+  (=destructure (_ elems _)
+		(=list (%when (=backtick)
+			      (lambda (input)
+				(setf (active-lexer input)
+				      (=tpl-token))))
+		       (%any (%or (=interpol)
+				  (=template-substring)))
+		       (%when (=backtick)
+			      (lambda (input)
+				(setf (active-lexer input)
+				      (=std-token)))))
+    (list :node :template-literal :elems elems)))
+
+(defun =interpol ()
+  (=destructure (_ term _)
+		(=list (%when (=interpol-start)
+			      (lambda (input)
+				(setf (active-lexer input)
+				      (=std-token))))
+		       '=term/parser
+		       (%when (=rcurly)
+			      (lambda (input)
+				(setf (active-lexer input)
+				      (=tpl-token)))))
+    term))
+
+(setf (fdefinition '=term/parser) (=term))

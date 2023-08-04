@@ -2,6 +2,7 @@
   (:use :cl :maxpc :twolang/util/ast)
   (:import-from :alexandria :make-keyword)
   (:export
+   #:%when
    #:=constant
    #:=satisfies
    #:=fold
@@ -14,6 +15,14 @@
    #:=operators-r))
 
 (in-package :twolang/util/maxpc)
+
+(defun %when (parser callback)
+  (lambda (input)
+    (multiple-value-bind (rest result resultp)
+	(funcall parser input)
+      (when rest
+	(funcall callback rest))
+      (values rest result resultp))))
 
 (defun =constant (parser result)
   (=transform parser
