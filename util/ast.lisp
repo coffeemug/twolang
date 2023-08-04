@@ -5,6 +5,7 @@
    #:node-value
    #:node-left
    #:node-right
+   #:node-elems
    #:node-type
    #:set-node-type))
 
@@ -21,6 +22,9 @@
 
 (defun node-right (node)
   (dict-get node :right))
+
+(defun node-elems (node)
+  (dict-get node :elems))
 
 (defun node-type (node)
   (dict-get node :type))

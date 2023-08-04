@@ -10,6 +10,8 @@
   (case (node node)
     (:int-literal (setf (node-type node) :int))
     (:string-literal (setf (node-type node) :string))
+    (:template-literal (setf (node-type node) :string))
+    (:template-substring (setf (node-type node) :string))
     (:addop (tc-op! node))
     (:subop (tc-op! node))
     (:mulop (tc-op! node))

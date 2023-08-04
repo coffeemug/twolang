@@ -9,6 +9,8 @@
   (case (node node)
     (:int-literal (node-value node))
     (:string-literal (node-value node))
+    (:template-literal (cc-template-literal node))
+    (:template-substring (node-value node))
     (:addop (cc-op node))
     (:subop (cc-op node))
     (:mulop (cc-op node))
@@ -22,3 +24,8 @@
       (:subop `(- ,left/cc ,right/cc))
       (:mulop `(* ,left/cc ,right/cc))
       (otherwise (error "cc-op unknown node type")))))
+
+(defun cc-template-literal (node)
+  `(concatenate 'string 
+		,@(loop for x in (node-elems node)
+			collect `(format nil "~a" ,(cc x)))))
