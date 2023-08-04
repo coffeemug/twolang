@@ -19,7 +19,7 @@
    :handler #'repl-command-handler))
 
 (defstruct repl-opts
-  print-lex-p print-ast-p print-lisp-p)
+  print-ast-p print-lisp-p)
 
 (defun repl-command-handler (cmd)
   (declare (ignore cmd))
@@ -84,21 +84,19 @@ installed."
 
 (defun eval-line* (line)
   (declare (special *repl-ctrl*))
-  (let ((lexed-input (make-lexed-input line (=std-token))))
-    (when (repl-opts-print-lex-p *repl-ctrl*)
-      (format t "!lex+ not implemented~%"))
-    (let ((parsed (parse lexed-input)))
-      (when (repl-opts-print-ast-p *repl-ctrl*)
-	(format t "~s~%" parsed))
-      (let* ((checked (tc! parsed))
-	     (compiled (cc checked)))
-	(when (repl-opts-print-lisp-p *repl-ctrl*)
-	  (format t "~s~%" compiled))
-	(with-color (:black :effect :bright)
-	  (format t "=> "))
-	(format t "~s :: ~a~%~%"
-		(funcall (compile nil `(lambda () ,compiled)))
-		(type-hrepr (node-type checked)))))))
+  (let* ((lexed-input (make-lexed-input line (=std-token)))
+	 (parsed (parse lexed-input)))
+    (when (repl-opts-print-ast-p *repl-ctrl*)
+      (format t "~s~%" parsed))
+    (let* ((checked (tc! parsed))
+	   (compiled (cc checked)))
+      (when (repl-opts-print-lisp-p *repl-ctrl*)
+	(format t "~s~%" compiled))
+      (with-color (:black :effect :bright)
+	(format t "=> "))
+      (format t "~s :: ~a~%~%"
+	      (funcall (compile nil `(lambda () ,compiled)))
+	      (type-hrepr (node-type checked))))))
 
 (defun on-error (error)
   (if *debugger-hook*
@@ -112,8 +110,8 @@ installed."
   (let ((line (string-trim '(#\Space #\Tab #\Newline) line)))
     (when (equal (uiop:first-char line) #\!)
       (cond
-	((equal line "!lex+") (setf (repl-opts-print-lex-p *repl-ctrl*) t))
-	((equal line "!lex-") (setf (repl-opts-print-lex-p *repl-ctrl*) nil))
+	((equal line "!lex+") (setf *debug-lexed-input* t))
+	((equal line "!lex-") (setf *debug-lexed-input* nil))
 	((equal line "!ast+") (setf (repl-opts-print-ast-p *repl-ctrl*) t))
 	((equal line "!ast-") (setf (repl-opts-print-ast-p *repl-ctrl*) nil))
 	((equal line "!lisp+") (setf (repl-opts-print-lisp-p *repl-ctrl*) t))
@@ -124,11 +122,8 @@ installed."
 
 (defun print-repl-ctrl ()
   (declare (special *repl-ctrl*))
-  (let ((lexp (repl-opts-print-lex-p *repl-ctrl*))
-	(astp (repl-opts-print-ast-p *repl-ctrl*))
-	(lispp (repl-opts-print-lisp-p *repl-ctrl*))))
   (with-color (:black :effect :bright)
-    (format t "[lex~a] " (if (repl-opts-print-lex-p *repl-ctrl*) #\+ #\-))
+    (format t "[lex~a] " (if *debug-lexed-input* #\+ #\-))
     (format t "[ast~a] " (if (repl-opts-print-ast-p *repl-ctrl*) #\+ #\-))
     (format t "[lisp~a] " (if (repl-opts-print-lisp-p *repl-ctrl*) #\+ #\-))
     (format t "~%~%"))

@@ -1,10 +1,11 @@
 (defpackage :twolang/lex/lexed-input
   (:use :cl :maxpc.input)
-  (:export
-   #:lexed-input #:make-lexed-input #:source-input #:active-lexer #:input-sequence
-   #:input-sequence*))
+  (:export #:*debug-lexed-input* #:lexed-input #:make-lexed-input
+  #:source-input #:active-lexer #:input-sequence #:input-sequence*))
 
 (in-package :twolang/lex/lexed-input)
+
+(defvar *debug-lexed-input* nil)
 
 (defclass lexed-input ()
   ((source-input :initarg :source-input :accessor source-input)
@@ -35,7 +36,8 @@
       (when (not resultp)
 	;; if lexer returns an empty token (i.e. on whitespace), we consume again
 	(return-from input-first (input-first obj)))
-      (format t "~s,~%" result)
+      (when *debug-lexed-input*
+	(format t "~s,~%" result))
       (setf (cached-element obj)
 	    (list rest result resultp))))
   (destructuring-bind (rest result resultp)
