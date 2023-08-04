@@ -33,9 +33,10 @@
       (t (error "unknown tag for template")))))
 
 (defun cc-cl-template (node)
-  `(eval
-    (read-from-string
-     ,(cc-template-literal node))))
+  (read-from-string
+   (apply #'concatenate 'string 
+	  (loop for x in (node-elems node)
+		collect (format nil "~a" (cc x))))))
 
 (defun cc-template-literal (node)
   `(concatenate 'string 
