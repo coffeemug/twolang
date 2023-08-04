@@ -9,6 +9,7 @@
   (case (node node)
     (:int-literal (node-value node))
     (:string-literal (node-value node))
+    (:tagged-template (cc-tagged-template node))
     (:template-literal (cc-template-literal node))
     (:template-substring (node-value node))
     (:addop (cc-op node))
@@ -24,6 +25,16 @@
       (:subop `(- ,left/cc ,right/cc))
       (:mulop `(* ,left/cc ,right/cc))
       (otherwise (error "cc-op unknown node type")))))
+
+(defun cc-tagged-template (node)
+  (let ((tag (node-value (node-tag node))))
+    (cond
+      ((string= tag "cl") (cc-cl-template (node-template node)))
+      (t (error "unknown tag for template")))))
+
+(defun cc-cl-template (node)
+  `(read-from-string
+    ,(cc-template-literal node)))
 
 (defun cc-template-literal (node)
   `(concatenate 'string 

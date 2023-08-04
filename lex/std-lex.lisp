@@ -1,5 +1,6 @@
 (defpackage :twolang/lex/std-lex
   (:use :cl :maxpc :maxpc.char :maxpc.digit :twolang/util/maxpc)
+  (:import-from :alexandria :flatten)
   (:export
    #:=std-token))
 
@@ -26,6 +27,9 @@
    ;; other symbols
    (=lex/backtick)
 
+   ;; identifiers
+   (=lex/ident)
+
    ;; whitespace
    (?ws)))
 
@@ -37,6 +41,17 @@
     (=destructure (_ str _)
 		  (=list (?char #\") (=subseq (%any (?not (?char #\")))) (?char #\"))
       str))
+
+(deftoken ident
+    (%and (?not (=keyword))
+	  (=transform
+	   (=list (=alpha) (%any (=alnum)))
+	   (lambda (elements)
+	     (apply 'concatenate
+		    (cons 'string (flatten elements)))))))
+
+(defun =keyword ()
+  (%or))
 
 ;; brackets
 (deftoken+ lparen (?char #\())
@@ -51,6 +66,17 @@
 
 ;; other symbols
 (deftoken+ backtick (?char #\`))
+
+;; alphabet
+(defun =alpha ()
+  (=subseq (?satisfies 'alpha-char-p)))
+
+(defun =digit ()
+  (=subseq (?digit)))
+
+(defun =alnum ()
+  (%or (=alpha) (=digit)))
+
 
 ;; whitespace
 (defun ?ws () (%some (?whitespace)))

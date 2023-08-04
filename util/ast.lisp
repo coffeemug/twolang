@@ -6,6 +6,8 @@
    #:node-left
    #:node-right
    #:node-elems
+   #:node-tag
+   #:node-template
    #:node-type
    #:set-node-type))
 
@@ -25,6 +27,12 @@
 
 (defun node-elems (node)
   (dict-get node :elems))
+
+(defun node-tag (node)
+  (dict-get node :tag))
+
+(defun node-template (node)
+  (dict-get node :template))
 
 (defun node-type (node)
   (dict-get node :type))

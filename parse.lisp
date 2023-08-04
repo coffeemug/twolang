@@ -26,7 +26,13 @@
   (%or
    (=int-literal)
    (=string-literal)
+   (=tagged-template)
    (=template-literal)))
+
+(defun =tagged-template ()
+  (=destructure (ident tmpl)
+		(=list (=ident) (=template-literal))
+    (list :node :tagged-template :tag ident :template tmpl)))
 
 (defun =template-literal ()
   (=destructure (_ elems _)
