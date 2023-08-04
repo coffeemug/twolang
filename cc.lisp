@@ -33,8 +33,9 @@
       (t (error "unknown tag for template")))))
 
 (defun cc-cl-template (node)
-  `(read-from-string
-    ,(cc-template-literal node)))
+  `(eval
+    (read-from-string
+     ,(cc-template-literal node))))
 
 (defun cc-template-literal (node)
   `(concatenate 'string 
