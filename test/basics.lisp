@@ -17,7 +17,10 @@
 (test basics
   (evals-to "1" 1 :int)
   (evals-to "2 + 3 * 4" 14 :int)
-  (evals-to "\"hello\"" "hello" :string))
+  (evals-to "\"hello\"" "hello" :string)
+  (evals-to "`${1} ${2}`" "1 2" :string)
+  (evals-to "cl`(+ 1 2)`" 3 :unknown)
+  (evals-to "cl`(+ 1 ${cl`2`})`" 3 :unknown))
 
 ;; 5am test on C-c C-c config
 (setf fiveam:*run-test-when-defined* t)
