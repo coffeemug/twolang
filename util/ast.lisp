@@ -6,8 +6,12 @@
    #:node-left
    #:node-right
    #:node-elems
+   #:node-implicitp
    #:node-tag
    #:node-template
+   #:node-name
+   #:node-args
+   #:node-body
    #:node-type
    #:set-node-type))
 
@@ -28,11 +32,23 @@
 (defun node-elems (node)
   (dict-get node :elems))
 
+(defun node-implicitp (node)
+  (dict-get node :implicitp))
+
 (defun node-tag (node)
   (dict-get node :tag))
 
 (defun node-template (node)
   (dict-get node :template))
+
+(defun node-name (node)
+  (dict-get node :name))
+
+(defun node-args (node)
+  (dict-get node :args))
+
+(defun node-body (node)
+  (dict-get node :body))
 
 (defun node-type (node)
   (dict-get node :type))

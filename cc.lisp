@@ -9,6 +9,8 @@
   (case (node node)
     (:int-literal (node-value node))
     (:string-literal (node-value node))
+    (:deffn (cc-deffn node))
+    (:block (cc-block node))
     (:tagged-template (cc-tagged-template node))
     (:template-literal (cc-template-literal node))
     (:template-substring (node-value node))
@@ -17,14 +19,18 @@
     (:mulop (cc-op node))
     (otherwise (error "cc unknown node type"))))
 
-(defun cc-op (node)
-  (let ((left/cc (cc (node-left node)))
-	(right/cc (cc (node-right node))))
-    (case (node node)
-      (:addop `(+ ,left/cc ,right/cc))
-      (:subop `(- ,left/cc ,right/cc))
-      (:mulop `(* ,left/cc ,right/cc))
-      (otherwise (error "cc-op unknown node type")))))
+(defun cc-deffn (node)
+  `(defun ,(node-value (node-name node)) (#|,@(node-args node)|#)
+     ,@(cc-block (node-body node))))
+
+(defun cc-block (node)
+  (let ((stmt-exprs))
+    (setf stmt-exprs
+	  (loop for x in (node-elems node)
+		collect (cc x)))
+    (if (node-implicitp node)
+	stmt-exprs
+	`(progn ,@stmt-exprs))))
 
 (defun cc-tagged-template (node)
   (let ((tag (node-value (node-tag node))))
@@ -42,3 +48,13 @@
   `(concatenate 'string 
 		,@(loop for x in (node-elems node)
 			collect `(format nil "~a" ,(cc x)))))
+
+(defun cc-op (node)
+  (let ((left/cc (cc (node-left node)))
+	(right/cc (cc (node-right node))))
+    (case (node node)
+      (:addop `(+ ,left/cc ,right/cc))
+      (:subop `(- ,left/cc ,right/cc))
+      (:mulop `(* ,left/cc ,right/cc))
+      (otherwise (error "cc-op unknown node type")))))
+

@@ -16,6 +16,7 @@
    ;; brackets
    (=lex/lparen)
    (=lex/rparen)
+   (=lex/lcurly)
    (=lex/rcurly)
 
    ;; operators
@@ -26,12 +27,21 @@
 
    ;; other symbols
    (=lex/backtick)
+   (=lex/colon)
 
-   ;; identifiers
+   ;; words
+   (=keyword)
    (=lex/ident)
 
    ;; whitespace
    (?ws)))
+
+;; keywords
+(defun =keyword ()
+  (%or
+   (=lex/fn)))
+
+(deftoken+ fn (?string "fn"))
 
 ;; literals
 (deftoken int-literal
@@ -50,12 +60,11 @@
 	     (apply 'concatenate
 		    (cons 'string (flatten elements)))))))
 
-(defun =keyword ()
-  (%or))
 
 ;; brackets
 (deftoken+ lparen (?char #\())
 (deftoken+ rparen (?char #\)))
+(deftoken+ lcurly (?char #\{))
 (deftoken+ rcurly (?char #\}))
 
 ;; operators
@@ -66,6 +75,7 @@
 
 ;; other symbols
 (deftoken+ backtick (?char #\`))
+(deftoken+ colon (?char #\:))
 
 ;; alphabet
 (defun =alpha ()

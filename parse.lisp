@@ -1,5 +1,5 @@
 (defpackage :twolang/parse
-  (:use :cl :maxpc :twolang/lex/std-lex :twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc)
+  (:use :cl :maxpc :maxpc.char :twolang/lex/std-lex :twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc)
   (:shadow #:parse)
   (:export
    #:parse))
@@ -11,7 +11,8 @@
   (maxpc::parse tokens (=toplevel)))
 
 (defun =toplevel ()
-  (%or (=term)))
+  (%or (=deffn)
+       (=term)))
 
 (defun =term ()
   (=operators (=factor)
@@ -27,8 +28,34 @@
    (=int-literal)
    (=string-literal)
    (=tagged-template)
-   (=template-literal)))
+   (=template-literal)
+   (=block)))
 
+;; function definition
+(defun =deffn ()
+  (=destructure (_ name args body)
+		(=list (=fn) (=ident) (=arglist) (=block))
+    (list :node :deffn :name name :args args :body body)))
+
+(defun =arglist ()
+  (=destructure (_ arglist _)
+		(=list (=lparen) (%any (=arg)) (=rparen))
+    arglist))
+
+(defun =arg ()
+  (=destructure (arg _ type)
+		(=list (=ident) (=colon) (=typespec))
+    (cons arg type)))
+
+(defun =typespec ()
+  (=ident))
+
+(defun =block (&key implicitp)
+  (=destructure (_ stmt-exprs _)
+		(=list (=lcurly) (%any '=term/parser) (=rcurly))
+    (list :node :block :elems stmt-exprs :implicitp implicitp)))
+
+;; template (literals and tagged)
 (defun =tagged-template ()
   (=destructure (ident tmpl)
 		(=list (=ident) (=template-literal))

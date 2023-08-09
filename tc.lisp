@@ -10,6 +10,8 @@
   (case (node node)
     (:int-literal (setf (node-type node) :int))
     (:string-literal (setf (node-type node) :string))
+    (:deffn (tc-deffn! node))
+    (:block (tc-block! node))
     (:tagged-template (setf (node-type node) :unknown))
     (:template-literal (setf (node-type node) :string))
     (:template-substring (setf (node-type node) :string))
@@ -18,6 +20,17 @@
     (:mulop (tc-op! node))
     (otherwise (error (format nil "tc! unknown node type ~a" (node node)))))
   node)
+
+(defun tc-deffn! (node)
+  (setf (node-type node)
+	(tc-block! (node-body node))))
+
+(defun tc-block! (node)
+  (setf (node-type node)
+	(or (loop for x in (node-elems node)
+		  for y = (tc! x)
+		  finally (return (node-type y)))
+	    :!)))
 
 (defun tc-op! (node)
   (tc! (node-left node))

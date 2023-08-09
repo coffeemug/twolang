@@ -94,9 +94,11 @@ installed."
 	(format t "~s~%" compiled))
       (with-color (:black :effect :bright)
 	(format t "=> "))
-      (format t "~s :: ~a~%~%"
-	      (funcall (compile nil `(lambda () ,compiled)))
-	      (type-hrepr (node-type checked))))))
+      (let ((evaled (funcall (compile nil `(lambda () ,compiled))))
+	    (trepr (type-hrepr (node-type checked))))
+	(if (eq (node-type checked) :!)
+	    (format t ":: ~a~%~%" trepr)
+	    (format t "~s :: ~a~%~%" evaled trepr))))))
 
 (defun on-error (error)
   (if *debugger-hook*
