@@ -10,28 +10,28 @@
 (defun =std-token ()
   (%or
    ;; literals
-   (=lex/int-literal)
-   (=lex/string-literal)
+   (=char/int-literal)
+   (=char/string-literal)
 
    ;; brackets
-   (=lex/lparen)
-   (=lex/rparen)
-   (=lex/lcurly)
-   (=lex/rcurly)
+   (=char/lparen)
+   (=char/rparen)
+   (=char/lcurly)
+   (=char/rcurly)
 
    ;; operators
-   (=lex/plus)
-   (=lex/minus)
-   (=lex/asterisk)
-   (=lex/slash)
+   (=char/plus)
+   (=char/minus)
+   (=char/asterisk)
+   (=char/slash)
 
    ;; other symbols
-   (=lex/backtick)
-   (=lex/colon)
+   (=char/backtick)
+   (=char/colon)
 
    ;; words
    (=keyword)
-   (=lex/ident)
+   (=char/ident)
 
    ;; whitespace
    (?ws)))
@@ -39,7 +39,7 @@
 ;; keywords
 (defun =keyword ()
   (%or
-   (=lex/fn)))
+   (=char/fn)))
 
 (deftoken+ fn (?string "fn"))
 

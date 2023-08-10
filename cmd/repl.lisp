@@ -1,5 +1,6 @@
 (defpackage :twolang/cmd/repl
-  (:use :cl :twolang/util/ast :twolang/lex/std-lex :twolang/lex/lexed-input :twolang/parse :twolang/tc :twolang/cc)
+  (:use :cl :twolang/lex/std-lex :twolang/lex/lexed-input
+  :twolang/parse :twolang/ast/interface :twolang/util/types)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)

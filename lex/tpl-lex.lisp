@@ -1,6 +1,6 @@
 (defpackage :twolang/lex/tpl-lex
   (:use :cl :maxpc :maxpc.char :maxpc.digit :twolang/util/maxpc)
-  (:import-from :twolang/lex/std-lex :=lex/backtick)
+  (:import-from :twolang/lex/std-lex :=char/backtick)
   (:export
    #:=tpl-token))
 
@@ -9,13 +9,13 @@
 ;; lexer
 (defun =tpl-token ()
   (%or
-   (=lex/backtick)
-   (=lex/interpol-start)
-   (=lex/template-substring)))
+   (=char/backtick)
+   (=char/interpol-start)
+   (=char/template-substring)))
 
 (deftoken+ interpol-start (?string "${"))
 
 (deftoken template-substring
-    (=subseq (%any (%and (?not (=lex/interpol-start))
-			 (?not (=lex/backtick))))))
+    (=subseq (%any (%and (?not (=char/interpol-start))
+			 (?not (=char/backtick))))))
 

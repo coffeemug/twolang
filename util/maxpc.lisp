@@ -1,7 +1,8 @@
 (defpackage :twolang/util/maxpc
-  (:use :cl :maxpc :twolang/util/ast)
+  (:use :cl :maxpc :twolang/util/dict)
   (:import-from :alexandria :make-keyword)
   (:export
+   #:lex-value
    #:%when
    #:=constant
    #:=satisfies
@@ -15,6 +16,9 @@
    #:=operators-r))
 
 (in-package :twolang/util/maxpc)
+
+(defun lex-value (node)
+  (dict-get node :value))
 
 (defun %when (parser callback)
   (lambda (input)
@@ -73,8 +77,8 @@
 corresponding parser to parse the token out a token stream."
   (let* ((name-str (symbol-name name))
          (keyword-name (make-keyword name-str))
-	 (lexer-name (intern (concatenate 'string "=" "LEX/" name-str)))
-         (predicate-name (intern (concatenate 'string "=" name-str))))
+	 (lexer-name (intern (concatenate 'string "=" "CHAR/" name-str)))
+         (predicate-name (intern (concatenate 'string "=" "LEX/" name-str))))
     `(progn
        (defun ,lexer-name ()
 	 (with-pos% pos
@@ -86,7 +90,7 @@ corresponding parser to parse the token out a token stream."
 		    :pos pos)))))
        (defun ,predicate-name ()
          (=satisfies (lambda (token)
-                       (eq (node token) ,keyword-name))))
+                       (eq (dict-get token :node) ,keyword-name))))
        (eval-when (:compile-toplevel :load-toplevel :execute)
          (export ',predicate-name)))))
 
@@ -94,26 +98,3 @@ corresponding parser to parse the token out a token stream."
   "Same as `deftoken`, but simple tokens that can be expressed as a
 symbol."
   `(deftoken ,name ,parser))
-
-(defun =operators (operand-parser &rest token-optype-pairs)
-  (=fold operand-parser
-	 (with-pos% pos
-	   (=destructure (optype rvalue)
-			 (=list (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
-						  collect (=constant token optype)))
-				operand-parser)
-	     (list :node optype :right rvalue :pos pos)))
-	 (lambda (lvalue partial-operator)
-	   `(:left ,lvalue ,@partial-operator))))
-
-(defun =operators-r (operand-parser &rest token-optype-pairs)
-  (=foldr (with-pos% pos
-	    (=destructure (lvalue optype)
-			  (=list operand-parser
-				 (apply '%or (loop for (token optype) on token-optype-pairs by 'cddr
-						   collect (=constant token optype))))
-	      (list :node optype :left lvalue)))
-	  operand-parser
-	  (lambda (partial-operator rvalue)
-	    `(:right ,rvalue ,@partial-operator))))
-
