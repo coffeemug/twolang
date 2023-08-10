@@ -1,6 +1,6 @@
 (defpackage :twolang/ast/deffn
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface :twolang/lex/std-lex
-   :twolang/ast/block)
+   :twolang/ast/block :twolang/util/cc)
   (:export #:deffn #:=deffn #:make-deffn))
 
 (in-package :twolang/ast/deffn)
@@ -19,12 +19,12 @@
 
 (defmethod tc! ((node deffn))
   (setf (node-type node)
-	(tc! (deffn-body node)))
+	(node-type (tc! (deffn-body node))))
   node)
 
 (defmethod cc ((node deffn))
-  `(defun ,(lex-value (deffn-name node)) (#|,@(node-args node)|#)
-     ,@(cc (deffn-body node))))
+  `(defun ,(intern/cc (lex-value (deffn-name node))) (#|,@(node-args node)|#)
+     ,(cc (deffn-body node))))
 
 (defun =deffn ()
   (=destructure (_ name args body)
