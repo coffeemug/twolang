@@ -18,8 +18,8 @@
 		 :pos pos))
 
 (defmethod tc! ((node deffn))
-  (setf (node-type node)
-	(node-type (tc! (deffn-body node))))
+  (let ((rettype (node-type (tc! (deffn-body node)))))
+    (setf (node-type node) `(:fn () ,rettype)))
   node)
 
 (defmethod cc ((node deffn))
