@@ -1,6 +1,6 @@
 (defpackage :twolang/ast/deffn
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface :twolang/lex/std-lex
-   :twolang/ast/block :twolang/util/cc)
+   :twolang/ast/block :twolang/util/cc :twolang/ast/shared)
   (:export #:deffn #:=deffn #:make-deffn))
 
 (in-package :twolang/ast/deffn)
@@ -28,7 +28,7 @@
 
 (defun =deffn ()
   (=destructure (_ name args body)
-		(=list (=lex/fn) (=lex/ident) (=arglist) (=block))
+		(=list (=lex/fn) (=varspec) (=arglist) (=block))
     (make-deffn name args body "TODO")))
 
 (defun =arglist ()
@@ -38,9 +38,6 @@
 
 (defun =arg ()
   (=destructure (arg _ type)
-		(=list (=lex/ident) (=lex/colon) (=typespec))
+		(=list (=varspec) (=lex/colon) (=typespec))
     (cons arg type)))
-
-(defun =typespec ()
-  (=lex/ident))
 

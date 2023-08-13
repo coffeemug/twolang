@@ -31,7 +31,8 @@
 
    ;; words
    (=keyword)
-   (=char/ident)
+   (=char/upident)
+   (=char/downident)
 
    ;; whitespace
    (?ws)))
@@ -52,10 +53,18 @@
 		  (=list (?char #\") (=subseq (%any (?not (?char #\")))) (?char #\"))
       str))
 
-(deftoken ident
+(deftoken upident
     (%and (?not (=keyword))
 	  (=transform
-	   (=list (=alpha) (%any (=alnum)))
+	   (=list (=upper) (%any (=alnum)))
+	   (lambda (elements)
+	     (apply 'concatenate
+		    (cons 'string (flatten elements)))))))
+
+(deftoken downident
+    (%and (?not (=keyword))
+	  (=transform
+	   (=list (=lower) (%any (=alnum)))
 	   (lambda (elements)
 	     (apply 'concatenate
 		    (cons 'string (flatten elements)))))))
@@ -80,6 +89,12 @@
 ;; alphabet
 (defun =alpha ()
   (=subseq (?satisfies 'alpha-char-p)))
+
+(defun =upper ()
+  (=subseq (?satisfies 'upper-case-p)))
+
+(defun =lower ()
+  (=subseq (?satisfies 'lower-case-p)))
 
 (defun =digit ()
   (=subseq (?digit)))

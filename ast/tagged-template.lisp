@@ -1,7 +1,7 @@
 (defpackage :twolang/ast/tagged-template
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface
 	:twolang/lex/std-lex :twolang/lex/tpl-lex :twolang/lex/lexed-input
-	:twolang/ast/template-literal)
+	:twolang/ast/template-literal  :twolang/ast/shared)
   (:export #:tagged-template #:=tagged-template #:make-tagged-template))
 
 (in-package :twolang/ast/tagged-template)
@@ -37,6 +37,6 @@
 
 (defun =tagged-template ()
   (=destructure (ident tmpl)
-		(=list (=lex/ident) (=template-literal))
+		(=list (=lex/downident) (=template-literal))
     (make-tagged-template ident tmpl "TODO")))
 
