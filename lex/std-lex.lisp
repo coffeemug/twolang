@@ -28,6 +28,7 @@
    ;; other symbols
    (=char/backtick)
    (=char/colon)
+   (=char/comma)
 
    ;; words
    (=keyword)
@@ -85,6 +86,7 @@
 ;; other symbols
 (deftoken+ backtick (?char #\`))
 (deftoken+ colon (?char #\:))
+(deftoken+ comma (?char #\,))
 
 ;; alphabet
 (defun =alpha ()

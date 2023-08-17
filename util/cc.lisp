@@ -1,13 +1,15 @@
 (defpackage :twolang/util/cc
-  (:use :cl)
+  (:use :cl :twolang/util/env)
   (:export
-   #:with-cc #:*cc-active-package* #:intern/cc))
+   #:with-cc #:*cc-active-package* #:*cc-env* #:intern/cc))
 
 (in-package :twolang/util/cc)
 
 (defmacro with-cc (module-name &body body)
-  `(let ((*cc-active-package* (make-package! ,module-name)))
+  `(let ((*cc-active-package* (make-package! ,module-name))
+	 (*cc-env* (make-env)))
      (declare (special *cc-active-package*))
+     (declare (special *cc-env*))
      (setf *package* *cc-active-package*)
      ,@body))
 

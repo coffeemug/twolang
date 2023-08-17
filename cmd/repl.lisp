@@ -1,7 +1,7 @@
 (defpackage :twolang/cmd/repl
   (:use :cl :twolang/lex/std-lex :twolang/lex/lexed-input
   :twolang/parse :twolang/ast/interface :twolang/util/types
-  :twolang/util/cc)
+  :twolang/util/cc :twolang/util/tc)
   (:import-from :clingon)
   (:import-from :cl-interpol)
   (:import-from :cl-readline)
@@ -57,14 +57,15 @@ installed."
       (find-package :slynk)))))
 
 (defun repl ()
-  (with-cc "repl-live"
-    (let ((count 0))
-      (loop for line = (progn
-			 (finish-output)
-			 (readline (make-prompt count)))
-	    while line do (when (not (string= line ""))
-			    (eval-line line)
-			    (incf count))))))
+  (with-tc
+      (with-cc "repl-live"
+	(let ((count 0))
+	  (loop for line = (progn
+			     (finish-output)
+			     (readline (make-prompt count)))
+		while line do (when (not (string= line ""))
+				(eval-line line)
+				(incf count)))))))
 
 (defun readline (prompt)
   (rl:readline :prompt prompt :add-history t))

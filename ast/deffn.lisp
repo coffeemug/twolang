@@ -1,6 +1,7 @@
 (defpackage :twolang/ast/deffn
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface :twolang/lex/std-lex
-   :twolang/ast/block :twolang/util/cc :twolang/ast/shared)
+   :twolang/ast/block :twolang/util/cc :twolang/util/tc
+   :twolang/util/env :twolang/ast/shared)
   (:export #:deffn #:=deffn #:make-deffn))
 
 (in-package :twolang/ast/deffn)
@@ -18,13 +19,26 @@
 		 :pos pos))
 
 (defmethod tc! ((node deffn))
-  (let ((rettype (node-type (tc! (deffn-body node)))))
-    (setf (node-type node) `(:fn () ,rettype)))
-  node)
+  (declare (special *tc-env*))
+  (with-scope *tc-env*
+    (loop for arg in (deffn-args node)
+	  do (add-variable *tc-env* (car arg) (cdr arg)))
+    (let ((rettype (node-type (tc! (deffn-body node)))))
+      (setf (node-type node) `(:fn () ,rettype)))
+    node))
 
 (defmethod cc ((node deffn))
-  `(defun ,(intern/cc (lex-value (deffn-name node))) (#|,@(node-args node)|#)
-     ,(cc (deffn-body node))))
+  (declare (special *cc-env*))
+  `(defun
+       ,(intern/cc (lex-value (deffn-name node)))
+       (,@(mapcar
+	   (lambda (arg)
+	     (intern/cc (lex-value (car arg))))
+	   (deffn-args node)))
+     ,(with-scope *cc-env*
+	(loop for arg in (deffn-args node)
+	      do (add-variable *tc-env* (car arg) (cdr arg)))
+	(cc (deffn-body node)))))
 
 (defun =deffn ()
   (=destructure (_ name args body)
@@ -33,7 +47,7 @@
 
 (defun =arglist ()
   (=destructure (_ arglist _)
-		(=list (=lex/lparen) (%any (=arg)) (=lex/rparen))
+		(=list (=lex/lparen) (=list* (=arg) (=lex/comma)) (=lex/rparen))
     arglist))
 
 (defun =arg ()
