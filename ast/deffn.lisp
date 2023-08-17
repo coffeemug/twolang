@@ -1,7 +1,7 @@
 (defpackage :twolang/ast/deffn
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface :twolang/lex/std-lex
    :twolang/ast/block :twolang/util/cc :twolang/util/tc
-   :twolang/util/env :twolang/ast/shared)
+   :twolang/util/env :twolang/ast/shared :twolang/util/types)
   (:export #:deffn #:=deffn #:make-deffn))
 
 (in-package :twolang/ast/deffn)
@@ -22,7 +22,7 @@
   (declare (special *tc-env*))
   (with-scope *tc-env*
     (loop for arg in (deffn-args node)
-	  do (add-variable *tc-env* (car arg) (cdr arg)))
+	  do (add-variable *tc-env* (lex-value (car arg)) (upident-to-type (cdr arg))))
     (let ((rettype (node-type (tc! (deffn-body node)))))
       (setf (node-type node) `(:fn () ,rettype)))
     node))

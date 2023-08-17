@@ -3,7 +3,8 @@
    :twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc
    :twolang/ast/int-literal :twolang/ast/string-literal
    :twolang/ast/template-literal :twolang/ast/tagged-template
-   :twolang/ast/block :twolang/ast/binop :twolang/ast/deffn)
+   :twolang/ast/block :twolang/ast/binop :twolang/ast/deffn
+   :twolang/ast/var)
   (:shadow #:parse)
   (:export
    #:parse))
@@ -33,6 +34,7 @@
    (=string-literal)
    (=tagged-template)
    (=template-literal)
-   (=block)))
+   (=block)
+   (=var)))
 
 (setf (fdefinition '=term/parser) (=term))

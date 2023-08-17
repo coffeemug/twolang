@@ -1,7 +1,7 @@
 (defpackage :twolang/util/types
-  (:use :cl)
+  (:use :cl :twolang/util/maxpc)
   (:export
-   #:type-hrepr))
+   #:type-hrepr #:upident-to-type))
 
 (in-package :twolang/util/types)
 
@@ -23,3 +23,9 @@
 
 (defun type-fn-hrepr (type)
   (format nil "() -> ~a" (type-hrepr (caddr type))))
+
+(defun upident-to-type (upident)
+  (cond
+    ((string= (lex-value upident) "Int") :int)
+    ((string= (lex-value upident) "String") :string)
+    (t (error "Uknown upident (upident-to-type)"))))
