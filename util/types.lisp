@@ -29,3 +29,8 @@
     ((string= (lex-value upident) "Int") :int)
     ((string= (lex-value upident) "String") :string)
     (t (error "Uknown upident (upident-to-type)"))))
+
+(defun ret-type (fn-type)
+  (unless (eq (car type) :fn)
+    (error "ret-type failed, fn-type not a function"))
+  (caddr fn-type))

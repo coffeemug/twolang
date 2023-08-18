@@ -1,6 +1,7 @@
 (defpackage :twolang/ast/var
   (:use :cl :maxpc :twolang/util/maxpc :twolang/ast/interface
-  :twolang/lex/std-lex :twolang/util/tc :twolang/util/env)
+	:twolang/lex/std-lex :twolang/util/tc :twolang/util/env
+	:twolang/util/cc)
   (:export #:var #:=var #:make-var))
 
 (in-package :twolang/ast/var)
@@ -22,7 +23,7 @@
     node))
 
 (defmethod cc ((node var))
-  (var-name node))
+  (intern/cc (var-name node)))
 
 (defun =var ()
   (=transform (=lex/downident)

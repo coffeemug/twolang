@@ -1,10 +1,10 @@
 (defpackage :twolang/parse
   (:use :cl :maxpc :maxpc.char :twolang/lex/std-lex
-   :twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc
+	:twolang/lex/tpl-lex :twolang/lex/lexed-input :twolang/util/maxpc
    :twolang/ast/int-literal :twolang/ast/string-literal
    :twolang/ast/template-literal :twolang/ast/tagged-template
    :twolang/ast/block :twolang/ast/binop :twolang/ast/deffn
-   :twolang/ast/var)
+	:twolang/ast/var :twolang/ast/fncall)
   (:shadow #:parse)
   (:export
    #:parse))
@@ -35,6 +35,7 @@
    (=tagged-template)
    (=template-literal)
    (=block)
+   (=fncall)
    (=var)))
 
 (setf (fdefinition '=term/parser) (=term))
